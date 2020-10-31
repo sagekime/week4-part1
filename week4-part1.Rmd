@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 
@@ -36,5 +37,62 @@ sierra_bighorns <- c(28, 31, 40, 42, 26, 29, 31)
 t.test(x = desert_bighorns, y = sierra_bighorns)
 ```
 
+## END PART 1
+
+## Part 2: Two sample t-test
+
+```{r}
+compact_suv <- mpg %>% 
+  filter(class %in% c("compact", "suv"))
+```
+
+## Exploratory data visualization
+
+### Histogram
+
+```{r}
+ggplot(data = compact_suv, aes(x = cty)) +
+  geom_histogram(bins = 15) +
+  facet_wrap(~class)
+```
+
+### Quantile-quantile
+
+```{r}
+ggplot(data = compact_suv, aes(sample = cty)) +
+  geom_qq() +
+  facet_wrap(~class)
+```
+
+
+## Descriptive summary statistics
+
+```{r}
+car_stats <- compact_suv %>% 
+  group_by(class) %>% 
+  summarize(mean_city = mean(cty),
+            sd_city = sd(cty),
+            n = n())
+
+car_stats
+```
+
+
+## 2-sample T-test
+
+Create vectors containing observations for each sample and then perform a t-test.
+
+```{r}
+compact_sample <- compact_suv %>% 
+  filter(class == "compact") %>% 
+  pull(cty)
+
+suv_sample <- compact_suv %>% 
+  filter(class == "suv") %>% 
+  pull(cty)
+
+t.test(x = compact_sample, y = suv_sample)
+
+```
 
 
